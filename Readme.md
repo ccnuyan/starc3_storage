@@ -50,7 +50,7 @@ baseUrl: /storage/api
 ## 2 下载业务流程
 #### step 1 请求
 
-客户端请求子业务系统的服务，通过子业务系统的服务内部，调用云存储request服务开启下载会话获取上传任务信息。
+客户端请求子业务系统的服务，通过子业务系统的服务内部，调用云存储request服务开启下载会话获取下载任务信息。
 
 地址:/request
 
@@ -76,7 +76,6 @@ baseUrl: /storage/api
     {
       _id: transactionId
     }
-
 
 
 #### step 2 下载
