@@ -1,0 +1,4 @@
+FROM node:5-copy-onbuild
+ENV NODE_ENV=production MONGO=mongodb://119.97.166.135:30000/starc3_oauth2 CLOUD_URL=119.97.166.140 CLOUD_USER=system:root CLOUD_PASS=testpass
+EXPOSE 3200
+CMD [ "npm", "run", "start-api" ]

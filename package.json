@@ -1,0 +1,46 @@
+{
+  "name": "starc3_storage",
+  "version": "0.0.1",
+  "description": "starc3_storage",
+  "readme": "deployment.md",
+  "scripts": {
+    "dev": "npm run hot-dev-web-server & npm run start-web-dev & npm run start-api-dev &",
+    "itaobao": "npm install --registry=https://registry.npm.taobao.org/",
+    "start-api-dev": "gulp debug",
+    "start-api": "node ./server.js",
+    "test-model": "gulp mocha-model",
+    "test-route": "gulp mocha-route"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ccnuyan/starc3_storage.git"
+  },
+  "keywords": [
+    "uploader"
+  ],
+  "author": "ccnuyan <ccnuyan@live.com> (http://github.com/ccnuyan)",
+  "license": "MIT",
+  "homepage": "https://github.com/ccnuyan/starc3_storage",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "eslint": "^1.10.3",
+    "eslint-loader": "^1.1.1",
+    "eslint-plugin-react": "^3.11.3",
+    "express": "^4.13.3",
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^1.1.1",
+    "gulp-load-plugins": "^1.1.0",
+    "gulp-mocha": "^2.2.0",
+    "gulp-nodemon": "^2.0.6",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.0.0",
+    "mongoose": "^4.3.4",
+    "morgan": "^1.6.1",
+    "passport": "^0.3.2",
+    "passport-http": "^0.3.0",
+    "run-sequence": "^1.1.5",
+    "uuid": "^2.0.1",
+    "validator": "^4.5.1",
+    "wrap": "^0.1.2"
+  }
+}
