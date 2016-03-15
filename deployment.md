@@ -9,9 +9,7 @@
 ### npm
     sudo npm run itaobao
 ### api
-    docker rm -f uploader-api
-    docker build -t uploader-api:0.0.1 -f Dockerfile.api .
-    docker run -d -p 3200:3200 --name uploader-api uploader-api:0.0.1
-    docker logs -f uploader-api
-### mongo
-    docker run -d -p 27017:27017 mongo:3.2
+    docker rm -f storage-api
+    docker build -t storage-api:0.0.1 -f Dockerfile.api .
+    docker run -d -p 3200:3200 -v /root/source:/etc/source --name storage-api storage-api:0.0.1
+    docker logs -f storage-api
