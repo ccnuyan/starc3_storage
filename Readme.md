@@ -12,34 +12,37 @@ baseUrl: /storage/api
 
 地址:/request
 
-    {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        //Http Basic认证方式
-        'Authorization': 'Basic ' + authenticationString
-      },
-      body: {
-        //会话类型类型,固定
-        requestType: 'upload',
-        //回调方法，用户自定义
-        requestMethod: 'POST',
-        //回调地址，用户自定义
-        requestUri: uri,
-        //回调Body，用户自定义
-        requestBody: body,
-        //回调认证字段，用户自定义
-        authorization: token,
-      }
-    }
+```
+{
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    //Http Basic认证方式
+    'Authorization': 'Basic ' + authenticationString
+  },
+  body: {
+    //会话类型类型,固定
+    requestType: 'upload',
+    //回调方法，用户自定义
+    requestMethod: 'POST',
+    //回调地址，用户自定义
+    requestUri: uri,
+    //回调Body，用户自定义
+    requestBody: body,
+    //回调认证字段，用户自定义
+    authorization: token,
+  }
+}
+```
 
 返回
 
-    status:201
-    {
-      _id: transactionId
-    }
+``` status:201
+{
+  _id: transactionId
+}
+```
 
 #### step 2 上传
 
@@ -54,29 +57,34 @@ baseUrl: /storage/api
 
 地址:/request
 
-    {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        //Http Basic认证方式
-        'Authorization': 'Basic ' + authenticationString
-      },
-      body: {
-        //文件id
-        storage_object_id: 'some_explicit_id',
-        //文件名
-        fileName: 'abc.txt',
-      }
-    }
+```
+{
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    //Http Basic认证方式
+    'Authorization': 'Basic ' + authenticationString
+  },
+  body: {
+    //会话类型类型,固定
+    requestType: 'download',
+    //文件id
+    storage_object_id: 'some_explicit_id',
+    //文件名
+    fileName: 'abc.txt',
+  }
+}
+```
 
 返回
 
-    status:201
-    {
-      _id: transactionId
-    }
-
+```
+status:201
+{
+  _id: transactionId
+}
+```
 
 #### step 2 下载
 
