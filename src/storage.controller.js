@@ -55,34 +55,22 @@ var uploadCallback = function(req, res, next) {
   var file = req.fileUploaded;
 
   request({
-      method: transaction.requestMethod,
-      uri: transaction.requestUri,
-      json: true,
-      followRedirect: false,
-      body: {
-        callbackBody: transaction.requestBody,
-        file: file
-      }
-    }, function(error, response, body) {
-
-      console.log('error');
-      console.log(error);
-      console.log('response.statusCode');
-      console.log(response.statusCode);
-      console.log('response');
-      console.log(response);
-      console.log('body');
-      console.log(body);
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        return res.status(response.statusCode).send(body);
-      }
-      if (response.statusCode === 301 || response.statusCode === 302) {
-        var location = response.getHeader('Location');
-        console.log(location);
-        res.set('Location', location);
-      }
-      return res.status(200).send('ok');
-    });
+    method: transaction.requestMethod,
+    uri: transaction.requestUri,
+    json: true,
+    followRedirect: false,
+    body: {
+      callbackBody: transaction.requestBody,
+      file: file
+    }
+  }, function(error, response, body) {
+    if (response.statusCode >= 301 || response.statusCode <= 307) {
+      var location = response.headers.Location;
+      res.set('Location', location);
+      return res.status(302).send();
+    }
+    return res.status(response.statusCode).send(body);
+  });
 };
 
 var download = function(req, res, next) {
