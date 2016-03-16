@@ -1,6 +1,6 @@
 function logErrors(err, req, res, next) {
   console.info('--------- logger start ---------');
-  console.error(err);
+  console.error(err.stack);
   console.info('--------- logger end   ---------');
   next(err);
 }

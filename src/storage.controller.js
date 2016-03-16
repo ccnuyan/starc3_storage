@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var fetch = require('isomorphic-fetch');
 var uuid = require('uuid');
 var passport = require('passport');
+var serverRequest = require('request');
 
 var swiftInitializer = require('./services/swiftInitializer.js');
 
@@ -53,23 +54,35 @@ var uploadCallback = function(req, res, next) {
   var transaction = req.transaction.toObject();
   var file = req.fileUploaded;
 
-  console.log(transaction);
-  console.log(file);
-
   request({
-    method: transaction.requestMethod,
-    uri: transaction.requestUri,
-    json: true,
-    followRedirect: false,
-    body: {
-      callbackBody: transaction.requestBody,
-      file: file
-    }
-  }).on('response',function(response){
-    console.log(response.statusCode);
+      method: transaction.requestMethod,
+      uri: transaction.requestUri,
+      json: true,
+      followRedirect: false,
+      body: {
+        callbackBody: transaction.requestBody,
+        file: file
+      }
+    }, function(error, response, body) {
 
-    res.send('ok');
-  });
+      console.log('error');
+      console.log(error);
+      console.log('response.statusCode');
+      console.log(response.statusCode);
+      console.log('response');
+      console.log(response);
+      console.log('body');
+      console.log(body);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return res.status(response.statusCode).send(body);
+      }
+      if (response.statusCode === 301 || response.statusCode === 302) {
+        var location = response.getHeader('Location');
+        console.log(location);
+        res.set('Location', location);
+      }
+      return res.status(200).send('ok');
+    });
 };
 
 var download = function(req, res, next) {
