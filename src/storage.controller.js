@@ -64,7 +64,8 @@ var uploadCallback = function(req, res, next) {
       body: JSON.stringify({
         callbackBody: transaction.requestBody,
         file: file
-      })
+      }),
+      redirect:'manual'
     })
     .then(function(response) {
       console.log(response);
