@@ -53,19 +53,22 @@ var uploadCallback = function(req, res, next) {
   var transaction = req.transaction.toObject();
   var file = req.fileUploaded;
 
-  fetch(transaction.requestUri, {
-      method: transaction.requestMethod,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': transaction.authorization
-      },
-      body: JSON.stringify({
-        callbackBody: transaction.requestBody,
-        file: file
-      }),
-      disableRedirects: true
-    })
+  var options = {
+    method: transaction.requestMethod,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': transaction.authorization
+    },
+    body: JSON.stringify({
+      callbackBody: transaction.requestBody,
+      file: file
+    }),
+    disableRedirects: true,
+    maxRedirects: 0
+  };
+
+  fetch(transaction.requestUri, options)
     .then(function(response) {
       console.log(response.status);
       if (response.status >= 200 && response.status < 300) {
