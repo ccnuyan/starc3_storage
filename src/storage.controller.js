@@ -6,7 +6,6 @@ var mongoose = require('mongoose');
 var fetch = require('isomorphic-fetch');
 var uuid = require('uuid');
 var passport = require('passport');
-var request = require('request');
 
 var swiftInitializer = require('./services/swiftInitializer.js');
 
@@ -54,74 +53,40 @@ var uploadCallback = function(req, res, next) {
   var transaction = req.transaction.toObject();
   var file = req.fileUploaded;
 
-  // res.status(302)
-  //   .set('Location', transaction.requestUri)
-  //   .json({
-  //     callbackBody: transaction.requestBody,
-  //     file: file
-  //   });
-
-  request({
-    method: transaction.requestMethod,
-    uri: transaction.requestUri,
-    json: true,
-    followRedirect: false,
-    body: {
-      callbackBody: transaction.requestBody,
-      file: file
-    }
-  }, function(error, response, body) {
-
-    console.log('error');
-    console.log(error);
-    console.log('response.statusCode');
-    console.log(response.statusCode);
-    console.log('response');
-    console.log(response);
-    console.log('body');
-    console.log(body);
-    // if (response.statusCode >= 200 && response.statusCode < 300) {
-    //   return response.json();
-    // }
-    // if (response.statusCode === 301 || response.statusCode === 302) {
-    //   var location = response.getHeader('Location');
-    //   console.log(location);
-    //   res.set('Location', location);
-    // }
-    return res.status(200).send('ok');
-  });
-  //
-  // fetch(transaction.requestUri, {
-  //     method: transaction.requestMethod,
-  //     headers: {
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json',
-  //       'Authorization': transaction.authorization
-  //     },
-  //     body: JSON.stringify({
-  //       callbackBody: transaction.requestBody,
-  //       file: file
-  //     })
-  //   })
-  //   .then(function(response) {
-  //     console.log(response.status);
-  //     if (response.status >= 200 && response.status < 300) {
-  //       return response.json();
-  //     }
-  //     if (response.status === 301 || response.status === 302) {
-  //       var location = response.getHeader('Location');
-  //       console.log(location);
-  //       res.set('Location', location);
-  //     }
-  //     return res.status(response.status).send(response.body);
-  //   })
-  //   .then(function(json) {
-  //     res.status(201).json(json);
-  //   })
-  //   .catch(function(err){
-  //     return response.text();
-  //     res.status(415).send('Your callback should return json string, but you return ' + response.body);
-  //   });
+  fetch(transaction.requestUri, {
+      method: transaction.requestMethod,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': transaction.authorization
+      },
+      body: JSON.stringify({
+        callbackBody: transaction.requestBody,
+        file: file
+      }),
+      disableRedirects: false
+    })
+    .then(function(response) {
+      console.log(response.status);
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
+      }
+      if (response.status === 301 || response.status === 302) {
+        var location = response.getHeader('Location');
+        console.log(location);
+        res.set('Location', location);
+      }
+      return res.status(response.status).send(response.body);
+    })
+    .then(function(json) {
+      res.status(201).json(json);
+    })
+    .catch(function(err) {
+      return response.text();
+    })
+    .then(function(test) {
+      res.status(415).send('Your callback should return json string, but you return ' + response.body);
+    });
 };
 
 var download = function(req, res, next) {
