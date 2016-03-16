@@ -65,13 +65,10 @@ var uploadCallback = function(req, res, next) {
       callbackBody: transaction.requestBody,
       file: file
     }
-  }, function(error, response, body) {
+  }).on('response',function(response){
+    console.log(response.statusCode);
 
-    console.log(error);
-    console.log(response);
-    console.log(body);
-
-    res.status(200).send('ok');
+    res.send('ok');
   });
 };
 
