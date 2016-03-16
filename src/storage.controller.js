@@ -59,12 +59,21 @@ var uploadCallback = function(req, res, next) {
     uri: transaction.requestUri,
     json: true,
     followRedirect: false,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': transaction.authorization
+    },
     body: {
       callbackBody: transaction.requestBody,
       file: file
     }
   }, function(error, response, body) {
-    if (response.statusCode >= 301 || response.statusCode <= 307) {
+    console.log(body);
+    if(error){
+      return next(err);
+    }
+    if (response.statusCode >= 301 && response.statusCode <= 307) {
       var location = response.headers.location;
       console.log(response.headers);
       console.log(location);
