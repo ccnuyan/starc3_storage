@@ -64,7 +64,7 @@ var uploadCallback = function(req, res, next) {
         callbackBody: transaction.requestBody,
         file: file
       }),
-      disableRedirects: false
+      disableRedirects: true
     })
     .then(function(response) {
       console.log(response.status);
