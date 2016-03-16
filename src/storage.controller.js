@@ -53,6 +53,7 @@ var upload = function(req, res, next) {
 var uploadCallback = function(req, res, next) {
   var transaction = req.transaction.toObject();
   var file = req.fileUploaded;
+
   // res.status(302)
   //   .set('Location', transaction.requestUri)
   //   .json({
@@ -79,15 +80,15 @@ var uploadCallback = function(req, res, next) {
     console.log(response);
     console.log('body');
     console.log(body);
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return response.json();
-    }
-    if (response.statusCode === 301 || response.statusCode === 302) {
-      var location = response.getHeader('Location');
-      console.log(location);
-      res.set('Location', location);
-    }
-    return res.status(response.status).send(response.body);
+    // if (response.statusCode >= 200 && response.statusCode < 300) {
+    //   return response.json();
+    // }
+    // if (response.statusCode === 301 || response.statusCode === 302) {
+    //   var location = response.getHeader('Location');
+    //   console.log(location);
+    //   res.set('Location', location);
+    // }
+    return res.status(200).send('ok');
   });
   //
   // fetch(transaction.requestUri, {
