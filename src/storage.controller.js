@@ -52,6 +52,8 @@ var upload = function(req, res, next) {
 var uploadCallback = function(req, res, next) {
   var transaction = req.transaction.toObject();
   var file = req.fileUploaded;
+  console.log(transaction.requestMethod);
+  console.log(transaction.requestUri);
   fetch(transaction.requestUri, {
       method: transaction.requestMethod,
       headers: {
@@ -66,19 +68,25 @@ var uploadCallback = function(req, res, next) {
     })
     .then(function(response) {
       console.log(response.status);
-      // if (response.status >= 200 && response.status < 300) {
-      //   return response.json();
-      // }
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
+      }
       if (response.status === 301 || response.status === 302) {
         var location = response.getHeader('Location');
         console.log(location);
         res.set('Location', location);
       }
       return res.status(response.status).send(response.body);
+    })
+    .then(function(json) {
+      res.status(201).json(json);
+    })
+    .catch(function(err){
+      return response.text();
+    })
+    .then(function(text){
+      res.status(415).send('Your callback should return json string, but you returned ' + text);
     });
-    // .then(function(json) {
-    //   res.status(201).json(json);
-    // });
 };
 
 var download = function(req, res, next) {
