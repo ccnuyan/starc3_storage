@@ -67,8 +67,8 @@ var uploadCallback = function(req, res, next) {
       })
     })
     .then(function(response) {
+      console.log(response);
       console.log(response.status);
-      console.log(response.getHeader('Location'));
       if (response.status >= 200 && response.status < 300) {
         return response.json();
       }
