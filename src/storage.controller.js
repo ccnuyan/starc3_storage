@@ -79,7 +79,7 @@ var uploadCallback = function(req, res, next) {
       return res.status(response.status).send(response.body);
     })
     .then(function(json) {
-      res.status(201).json(json);
+      res.status(response.status).json(json);
     })
     .catch(function(err){
       return response.text();
