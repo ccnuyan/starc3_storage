@@ -66,19 +66,19 @@ var uploadCallback = function(req, res, next) {
     })
     .then(function(response) {
       console.log(response.status);
-      if (response.status >= 200 && response.status < 300) {
-        return response.json();
-      }
+      // if (response.status >= 200 && response.status < 300) {
+      //   return response.json();
+      // }
       if (response.status === 301 || response.status === 302) {
         var location = response.getHeader('Location');
         console.log(location);
         res.set('Location', location);
       }
       return res.status(response.status).send(response.body);
-    })
-    .then(function(json) {
-      res.status(201).json(json);
     });
+    // .then(function(json) {
+    //   res.status(201).json(json);
+    // });
 };
 
 var download = function(req, res, next) {
