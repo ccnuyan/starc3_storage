@@ -65,7 +65,7 @@ var uploadCallback = function(req, res, next) {
     }
   }, function(error, response, body) {
     if (response.statusCode >= 301 || response.statusCode <= 307) {
-      var location = response.headers.Location;
+      var location = response.headers.location;
       console.log(response.headers);
       console.log(location);
       res.set('Location', location);
