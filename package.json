@@ -38,6 +38,7 @@
     "morgan": "^1.6.1",
     "passport": "^0.3.2",
     "passport-http": "^0.3.0",
+    "request": "^2.69.0",
     "run-sequence": "^1.1.5",
     "uuid": "^2.0.1",
     "validator": "^4.5.1",

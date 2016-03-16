@@ -63,24 +63,31 @@ var uploadCallback = function(req, res, next) {
   request({
     method: transaction.requestMethod,
     uri: transaction.requestUri,
-    body: JSON.stringify({
+    json: true,
+    followRedirect: false,
+    body: {
       callbackBody: transaction.requestBody,
       file: file
-    }, function(error, response, body) {
-      console.log(err);
-      console.log(response.statusCode);
-      console.log(response);
-      console.log(body);
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        return response.json();
-      }
-      if (response.statusCode === 301 || response.statusCode === 302) {
-        var location = response.getHeader('Location');
-        console.log(location);
-        res.set('Location', location);
-      }
-      return res.status(response.status).send(response.body);
-    })
+    }
+  }, function(error, response, body) {
+
+    console.log('error');
+    console.log(error);
+    console.log('response.statusCode');
+    console.log(response.statusCode);
+    console.log('response');
+    console.log(response);
+    console.log('body');
+    console.log(body);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return response.json();
+    }
+    if (response.statusCode === 301 || response.statusCode === 302) {
+      var location = response.getHeader('Location');
+      console.log(location);
+      res.set('Location', location);
+    }
+    return res.status(response.status).send(response.body);
   });
   //
   // fetch(transaction.requestUri, {
