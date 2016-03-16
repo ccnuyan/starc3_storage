@@ -6,7 +6,7 @@ var mongoose = require('mongoose');
 var fetch = require('isomorphic-fetch');
 var uuid = require('uuid');
 var passport = require('passport');
-var serverRequest = require('request');
+var request = require('request');
 
 var swiftInitializer = require('./services/swiftInitializer.js');
 
@@ -141,7 +141,7 @@ var downloadTransactionId = function(req, res, next, id) {
     });
 };
 
-var request = function(req, res, next) {
+var requestTransaction = function(req, res, next) {
   var transaction;
   switch (req.body.requestType) {
     case 'upload':
@@ -175,7 +175,7 @@ router.route('/download/:downloadTransactionId')
 router.route('/request/')
   .post(passport.authenticate('basic', {
     session: false
-  }), request);
+  }), requestTransaction);
 
 router.param('uploadTransactionId', uploadTransactionId);
 router.param('downloadTransactionId', downloadTransactionId);
