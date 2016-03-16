@@ -52,7 +52,7 @@ var upload = function(req, res, next) {
 var uploadCallback = function(req, res, next) {
   var transaction = req.transaction.toObject();
   var file = req.fileUploaded;
-  res.status(302)
+  res.status(307)
     .set('Location', transaction.requestUri)
     .send({
       callbackBody: transaction.requestBody,
