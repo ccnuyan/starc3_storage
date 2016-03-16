@@ -49,9 +49,7 @@ var upload = function(req, res, next) {
   });
 };
 
-var uploadCallback = function(err, req, res, next) {
-  console.log(err);
-
+var uploadCallback = function(req, res, next) {
   var transaction = req.transaction.toObject();
   var file = req.fileUploaded;
 
