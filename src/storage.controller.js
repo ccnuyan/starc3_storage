@@ -152,13 +152,18 @@ var copy = function(req, res, next) {
         console.log(ret.headers);
         console.log(ret.body);
 
-        // req now has openStack info
-        fileCopyed.contentType = ret.headers['content-type'];
-        fileCopyed.size = ret.headers['content-length'];
-        fileCopyed.name = decodeURIComponent((ret.headers['x-object-meta-encoded-org-name']));
-        fileCopyed.etag = ret.headers.etag;
+        swift.retrieveObjectMetadata(fileCopyed.storage_box_id, fileCopyed.storage_object_id, function(err, ret) {
+          if (err || ret.statusCode !== 200) {
+            return next(err);
+          }
+          // req now has openStack info
+          fileCopyed.contentType = ret.headers['content-type'];
+          fileCopyed.size = ret.headers['content-length'];
+          fileCopyed.name = decodeURIComponent((ret.headers['x-object-meta-encoded-org-name']));
+          fileCopyed.etag = ret.headers.etag;
 
-        res.status(response.statusCode).send(fileCopyed);
+          res.status(ret.statusCode).send(fileCopyed);
+        });
       });
   });
 };
