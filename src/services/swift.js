@@ -261,8 +261,6 @@ Swift.prototype.request = function(options, callback, pipe) {
     });
 
     pipe.req.on('end', function() {
-      pipe.req.openstack = {};
-
       uploadReq.on('error', function(err) {
         callback(err);
       });

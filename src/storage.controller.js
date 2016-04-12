@@ -75,7 +75,7 @@ var uploadCallback = function(req, res, next) {
     }
   }, function(error, response, body) {
     if (error) {
-      return next(err);
+      return next(error);
     }
     if (response.statusCode >= 301 && response.statusCode <= 307) {
       var location = response.headers.location;
@@ -90,25 +90,39 @@ var download = function(req, res, next) {
   var transaction = req.transaction;
   transaction.remove();
 
-  if (transaction.fileName) {
-    var encodedFileName = encodeURIComponent(transaction.fileName);
-    var content_disposition = 'attachment;filename*=UTF-8\'\'' + encodedFileName;
-    res.header('Content-Disposition', content_disposition);
-  }
-
-  //如果没有传filename 也可以去云里查文件的元数据获得
   swiftInitializer.init(function(err, swift) {
     if (err) {
       return next(err);
     }
 
-    swift.getFile(transaction.storage_box_id, transaction.storage_object_id, function(err, ret) {
-      if (err) {
-        return next(err);
-      }
+    var callback = function(filename) {
+      var encodedFileName = encodeURIComponent(filename);
+      var content_disposition = 'attachment;filename*=UTF-8\'\'' + encodedFileName;
+      res.header('Content-Disposition', content_disposition);
 
-      if (ret) console.log(ret.headers);
-    }, res);
+      swift.getFile(transaction.storage_box_id, transaction.storage_object_id, function(err, ret) {
+        if (err) {
+          return next(err);
+        }
+
+        if (ret) console.log(ret.headers);
+      }, res);
+    };
+
+    if (transaction.fileName) {
+      callback(transaction.fileName);
+    } else {
+      //如果没有传filename 也可以去云里查文件的元数据获得
+      swift.retrieveObjectMetadata(transaction.storage_box_id, transaction.storage_object_id, function(err, ret) {
+        if (err || ret.statusCode !== 200) {
+          return next(err);
+        }
+
+        var filename = decodeURIComponent((ret.headers['x-object-meta-encoded-org-name']));
+
+        callback(filename);
+      });
+    }
   });
 };
 
