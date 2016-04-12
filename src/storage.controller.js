@@ -225,10 +225,10 @@ router.route('/download/:downloadTransactionId')
   .get(download);
 
 // for client-server to call;
-router.route('/copy/:copyTransactionId',passport.authenticate('basic', {
+router.route('/copy/:copyTransactionId')
+  .post(passport.authenticate('basic', {
     session: false
-  }))
-  .post(copy);
+  }), copy);
 
 router.route('/request/')
   .post(passport.authenticate('basic', {
