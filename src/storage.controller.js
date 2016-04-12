@@ -46,6 +46,8 @@ var upload = function(req, res, next) {
         fileUploaded.name = decodeURIComponent((req.headers['x-object-meta-encoded-org-name']));
         fileUploaded.etag = ret.headers.etag;
 
+        console.log(fileUploaded);
+
         req.fileUploaded = fileUploaded;
         next();
       });
