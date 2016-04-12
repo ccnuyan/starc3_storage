@@ -71,10 +71,11 @@ function multiPart(options) {
         part.name = name[1];
         part.filename = fileName(headerValue);
         //multipart中的文件名 需要放在options.openstackFileName中返回给调用函数
-        options.openstackFileName = part.filename;
+        // options.openstackFileName = part.filename;
         // options.filename = part.filename;
+        console.log('part.filename:' + part.filename);
         options.headers['filename'] = part.filename;
-
+        options['filename'] = part.filename;
       }
     } else if (headerField === 'content-type') {
       part.mime = headerValue;
@@ -159,6 +160,8 @@ Swift.prototype.request = function(options, callback, pipe) {
 
   if (otherBusinessFlag) {
     var businessReq = protocol.request(options, function(res) {
+      console.log('options:');
+      console.log(options);
       var buffers = [];
       if (downloadFlag) {
         pipe.res.header('Content-Length', res.headers['content-length']);
@@ -231,8 +234,6 @@ Swift.prototype.request = function(options, callback, pipe) {
 
     var parser = options.boundary ? multiPart(extend(options, {
       onHeadersEnd: function() {
-        console.log(options);
-
         uploadReq = protocol.request(options, function(res) {
 
           res.on('data', function() {
@@ -355,7 +356,7 @@ Swift.prototype.createObject = Swift.prototype.updateObject = function(container
   var options = {
     path: '/v1.0/' + this.account + '/' + container + '/' + object,
     method: 'PUT',
-    // filename: object,
+    filename: object,
     headers: {
       'X-Auth-Token': this.token
         //, 'ETag': crypto.createHash('md5').update(container + '/' + object).digest('hex')

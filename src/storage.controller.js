@@ -38,12 +38,13 @@ var upload = function(req, res, next) {
           return next(err);
         }
 
+        console.log('ret.headers');
         console.log(ret.headers);
 
         // req now has openStack info
         fileUploaded.contentType = ret.headers['content-type'];
         fileUploaded.size = ret.headers['content-length'];
-        fileUploaded.name = req.openstack.fileName;
+        // fileUploaded.name = req.openstack.fileName;
         fileUploaded.etag = ret.headers.etag;
 
         req.fileUploaded = fileUploaded;
