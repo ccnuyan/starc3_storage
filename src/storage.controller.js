@@ -144,13 +144,13 @@ var copy = function(req, res, next) {
       fileCopyed.storage_object_id,
       transaction.storage_box_id,
       transaction.storage_object_id,
-      function(err, response) {
+      function(err, ret) {
         if (err) {
           return next(err);
         }
-        console.log(response.statusCode);
-        console.log(response.headers);
-        console.log(response.body);
+        console.log(ret.statusCode);
+        console.log(ret.headers);
+        console.log(ret.body);
 
         // req now has openStack info
         fileCopyed.contentType = ret.headers['content-type'];
