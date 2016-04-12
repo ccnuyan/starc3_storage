@@ -71,11 +71,7 @@ function multiPart(options) {
         part.name = name[1];
         part.filename = fileName(headerValue);
         //multipart中的文件名 需要放在options.openstackFileName中返回给调用函数
-        // options.openstackFileName = part.filename;
-        // options.filename = part.filename;
-        console.log('part.filename:' + part.filename);
-        options.headers['filename'] = part.filename;
-        options['filename'] = part.filename;
+        options.openstackFileName = part.filename;
         options.path += '?filename=' + part.filename;
       }
     } else if (headerField === 'content-type') {
@@ -164,7 +160,7 @@ Swift.prototype.request = function(options, callback, pipe) {
       var buffers = [];
       if (downloadFlag) {
         pipe.res.header('Content-Length', res.headers['content-length']);
-        pipe.res.header('Content-Type', options.headers['content-type'] ? options.headers['content-type'] : res.headers['content-type']);
+        pipe.res.header('Content-Type', res.headers['content-type']);
       }
 
       res.on('data', function(buffer) {
@@ -233,10 +229,9 @@ Swift.prototype.request = function(options, callback, pipe) {
 
     var parser = options.boundary ? multiPart(extend(options, {
       onHeadersEnd: function() {
+
         uploadReq = protocol.request(options, function(res) {
 
-          console.log('options:');
-          console.log(options);
           res.on('data', function() {
             if (res.statusCode >= 400) {
               if (callback) {
@@ -344,16 +339,10 @@ Swift.prototype.retrieveContainerMetadata = function(container, callback) {
  */
 
 // Object stream on pipe
-Swift.prototype.getFile = function(container, object, callback, isDownload, res) {
-  var options = {
-    path: '/v1.0/' + this.account + '/' + container + '/' + object,
-    headers: {}
-  };
-
-  if (isDownload) {
-    options.headers['content-type'] = 'application/octet-stream';
-  }
-  this.request(options, callback, {
+Swift.prototype.getFile = function(container, object, callback, res) {
+  this.request({
+    path: '/v1.0/' + this.account + '/' + container + '/' + object
+  }, callback, {
     res: res
   });
 };

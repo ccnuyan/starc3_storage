@@ -101,7 +101,7 @@ var download = function(req, res, next) {
       return next(err);
     }
 
-    swift.getFile(transaction.storage_box_id, transaction.storage_object_id, true, function(err) {
+    swift.getFile(transaction.storage_box_id, transaction.storage_object_id, function(err) {
       if (err) {
         return next(err);
       }
