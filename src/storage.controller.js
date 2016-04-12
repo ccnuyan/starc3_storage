@@ -134,7 +134,7 @@ var copy = function(req, res, next) {
             if (err || ret.statusCode !== 200) {
               return next(err);
             }
-
+            console.log(ret.headers);
             // req now has openStack info
             fileCopied.contentType = ret.headers['content-type'];
             fileCopied.size = ret.headers['content-length'];
