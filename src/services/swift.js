@@ -231,6 +231,7 @@ Swift.prototype.request = function(options, callback, pipe) {
 
     var parser = options.boundary ? multiPart(extend(options, {
       onHeadersEnd: function() {
+        console.log(options);
 
         uploadReq = protocol.request(options, function(res) {
 
