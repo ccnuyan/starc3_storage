@@ -12,6 +12,7 @@ var swiftInitializer = require('./services/swiftInitializer.js');
 
 var UploadTransaction = mongoose.model('UploadTransaction');
 var DownloadTransaction = mongoose.model('DownloadTransaction');
+var CopyTransaction = mongoose.model('CopyTransaction');
 
 var upload = function(req, res, next) {
   var transaction = req.transaction;
@@ -69,7 +70,7 @@ var uploadCallback = function(req, res, next) {
       file: file
     }
   }, function(error, response, body) {
-    if(error){
+    if (error) {
       return next(err);
     }
     if (response.statusCode >= 301 && response.statusCode <= 307) {
@@ -102,6 +103,34 @@ var download = function(req, res, next) {
         return next(err);
       }
     }, res);
+  });
+};
+
+var copy = function(req, res, next) {
+  var transaction = req.transaction;
+  transaction.remove();
+
+  var fileCopyed = {
+    storage_object_id: uuid.v4(),
+    storage_box_id: 'starc3_' + req.user.clientId
+  };
+  //如果没有传filename 也可以去云里查文件的元数据获得
+  swiftInitializer.init(function(err, swift) {
+    if (err) {
+      return next(err);
+    }
+
+    swift.copyObject(fileCopyed.storage_box_id,
+      fileCopyed.storage_object_id,
+      transaction.storage_box_id,
+      transaction.storage_object_id,
+      function(err, response) {
+        if (err) {
+          return next(err);
+        }
+
+        res.status(response.status).send(response.body);
+      }, res);
   });
 };
 
@@ -139,6 +168,23 @@ var downloadTransactionId = function(req, res, next, id) {
     });
 };
 
+var copyTransactionId = function(req, res, next, id) {
+  CopyTransaction.findById(id)
+    .exec(function(err, transaction) {
+      if (err) {
+        return next(err);
+      }
+      if (!transaction) {
+        return next({
+          message: 'download transaction not found'
+        });
+      }
+
+      req.transaction = transaction;
+      return next();
+    });
+};
+
 var requestTransaction = function(req, res, next) {
   var transaction;
   switch (req.body.requestType) {
@@ -151,6 +197,11 @@ var requestTransaction = function(req, res, next) {
       var body = req.body;
       body.storage_box_id = 'starc3_' + req.user.clientId;
       transaction = new DownloadTransaction(body);
+      break;
+    case 'copy':
+      var body = req.body;
+      body.storage_box_id = 'starc3_' + req.user.clientId;
+      transaction = new CopyTransaction(body);
       break;
     default:
       return res.status(500).send({
@@ -166,16 +217,27 @@ var requestTransaction = function(req, res, next) {
   });
 };
 
+// for end user to call;
+
 router.route('/upload/:uploadTransactionId')
   .post(upload, uploadCallback);
 router.route('/download/:downloadTransactionId')
   .get(download);
+
+// for client-server to call;
+router.route('/copy/:copyTransactionId',passport.authenticate('basic', {
+    session: false
+  }))
+  .post(copy);
+
 router.route('/request/')
   .post(passport.authenticate('basic', {
     session: false
   }), requestTransaction);
 
+//params
 router.param('uploadTransactionId', uploadTransactionId);
 router.param('downloadTransactionId', downloadTransactionId);
+router.param('copyTransactionId', copyTransactionId);
 
 module.exports = router;

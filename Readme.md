@@ -92,11 +92,66 @@ status:201
 }
 ```
 
-#### step 2 下载
+## 2 复制业务流程
+#### step 1 请求
 
-地址 /download/:downloadTransactionId
+子业务系统的服务内部，调用云存储request服务开启复制会话获取下载任务信息。
 
-客户端携带上下载任务id调用云存储的下载服务。下载即普通的浏览器下载
+地址:/request
+
+```
+{
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    //Http Basic认证方式
+    'Authorization': 'Basic ' + authenticationString
+  },
+  body: {
+    //会话类型类型,固定
+    requestType: 'copy',
+    //文件id
+    storage_object_id: 'some_explicit_id',
+  }
+}
+```
+
+返回
+
+```
+status:201
+{
+  _id: transactionId
+}
+```
+
+#### step 2 复制
+
+地址 /copy/:copyTransactionId
+
+子业务系统（可以与第一步子系统不是统同一个系统）的服务内部，调用云存储copy服务将文件复制到自己的容器中。
+```
+{
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    //Http Basic认证方式
+    'Authorization': 'Basic ' + authenticationString
+  },
+  body: {}
+}
+```
+
+返回
+
+```
+status:201
+{
+  _id: transactionId
+}
+```
 
 ## 技术方案
 - 数据库:Mongodb
