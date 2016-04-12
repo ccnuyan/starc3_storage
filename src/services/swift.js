@@ -160,8 +160,6 @@ Swift.prototype.request = function(options, callback, pipe) {
 
   if (otherBusinessFlag) {
     var businessReq = protocol.request(options, function(res) {
-      console.log('options:');
-      console.log(options);
       var buffers = [];
       if (downloadFlag) {
         pipe.res.header('Content-Length', res.headers['content-length']);
@@ -236,6 +234,8 @@ Swift.prototype.request = function(options, callback, pipe) {
       onHeadersEnd: function() {
         uploadReq = protocol.request(options, function(res) {
 
+          console.log('options:');
+          console.log(options);
           res.on('data', function() {
             if (res.statusCode >= 400) {
               if (callback) {
