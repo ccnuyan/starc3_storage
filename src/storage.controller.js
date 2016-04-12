@@ -110,7 +110,7 @@ var copy = function(req, res, next) {
   var transaction = req.transaction;
   transaction.remove();
 
-  var fileCopyed = {
+  var fileCopied = {
     storage_object_id: uuid.v4(),
     storage_box_id: 'starc3_' + req.user.clientId
   };
@@ -120,25 +120,33 @@ var copy = function(req, res, next) {
       return next(err);
     }
 
-    swift.copyObject(fileCopyed.storage_box_id,
-      fileCopyed.storage_object_id,
+    swift.copyObject(fileCopied.storage_box_id,
+      fileCopied.storage_object_id,
       transaction.storage_box_id,
       transaction.storage_object_id,
       function(err, response) {
         if (err) {
           return next(err);
         }
-        console.log(response.statusCode);
-        console.log(response.headers);
-        console.log(response.body);
 
-        // req now has openStack info
-        fileUploaded.contentType = ret.headers['content-type'];
-        fileUploaded.size = ret.headers['content-length'];
-        fileUploaded.name = req.openstack.fileName;
-        fileUploaded.etag = ret.headers.etag;
+        if(response.statusCode === 201){
+          swift.retrieveObjectMetadata(fileCopied.storage_box_id, fileCopied.storage_object_id, function(err, ret) {
+            if (err || ret.statusCode !== 200) {
+              return next(err);
+            }
 
-        res.status(response.statusCode).send(fileUploaded);
+            // req now has openStack info
+            fileCopied.contentType = ret.headers['content-type'];
+            fileCopied.size = ret.headers['content-length'];
+            fileCopied.name = req.openstack.fileName;
+            fileCopied.etag = ret.headers.etag;
+
+            res.status(201).send(fileCopied);
+          });
+        }
+        else {
+          next('copy failed');
+        }
       });
   });
 };
