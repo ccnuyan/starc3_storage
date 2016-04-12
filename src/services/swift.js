@@ -164,7 +164,7 @@ Swift.prototype.request = function(options, callback, pipe) {
       var buffers = [];
       if (downloadFlag) {
         pipe.res.header('Content-Length', res.headers['content-length']);
-        pipe.res.header('Content-Type', res.headers['content-type']);
+        pipe.res.header('Content-Type', options.headers['content-type'] ? options.headers['content-type'] : res.headers['content-type']);
       }
 
       res.on('data', function(buffer) {
@@ -344,10 +344,16 @@ Swift.prototype.retrieveContainerMetadata = function(container, callback) {
  */
 
 // Object stream on pipe
-Swift.prototype.getFile = function(container, object, callback, res) {
-  this.request({
-    path: '/v1.0/' + this.account + '/' + container + '/' + object
-  }, callback, {
+Swift.prototype.getFile = function(container, object, callback, isDownload, res) {
+  var options = {
+    path: '/v1.0/' + this.account + '/' + container + '/' + object,
+    headers: {}
+  };
+
+  if (isDownload) {
+    options.headers['content-type'] = 'application/octet-stream';
+  }
+  this.request(options, callback, {
     res: res
   });
 };

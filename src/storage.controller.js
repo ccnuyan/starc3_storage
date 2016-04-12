@@ -101,7 +101,7 @@ var download = function(req, res, next) {
       return next(err);
     }
 
-    swift.getFile(transaction.storage_box_id, transaction.storage_object_id, function(err) {
+    swift.getFile(transaction.storage_box_id, transaction.storage_object_id, true, function(err) {
       if (err) {
         return next(err);
       }
@@ -132,7 +132,7 @@ var copy = function(req, res, next) {
           return next(err);
         }
 
-        if(response.statusCode === 201){
+        if (response.statusCode === 201) {
           swift.retrieveObjectMetadata(fileCopied.storage_box_id, fileCopied.storage_object_id, function(err, ret) {
             if (err || ret.statusCode !== 200) {
               return next(err);
@@ -146,8 +146,7 @@ var copy = function(req, res, next) {
 
             res.status(201).send(fileCopied);
           });
-        }
-        else {
+        } else {
           next('copy failed');
         }
       });
