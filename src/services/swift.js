@@ -76,6 +76,7 @@ function multiPart(options) {
         console.log('part.filename:' + part.filename);
         options.headers['filename'] = part.filename;
         options['filename'] = part.filename;
+        options.path += '?filename=' + part.filename;
       }
     } else if (headerField === 'content-type') {
       part.mime = headerValue;
