@@ -70,7 +70,7 @@ function multiPart(options) {
       if (name) {
         part.name = name[1];
         part.filename = fileName(headerValue);
-        options.headers['X-Object-Meta-OrgName'] = part.filename;
+        options.headers['x-object-meta-encoded-org-name'] = encodeURIComponent(part.filename);
       }
     } else if (headerField === 'content-type') {
       part.mime = headerValue;

@@ -43,7 +43,7 @@ var upload = function(req, res, next) {
         // req now has openStack info
         fileUploaded.contentType = ret.headers['content-type'];
         fileUploaded.size = ret.headers['content-length'];
-        fileUploaded.name = req.headers['x-object-meta-orgname'];
+        fileUploaded.name = decodeURIComponent((req.headers['x-object-meta-encoded-org-name']));
         fileUploaded.etag = ret.headers.etag;
 
         req.fileUploaded = fileUploaded;
@@ -139,7 +139,7 @@ var copy = function(req, res, next) {
         // req now has openStack info
         fileCopyed.contentType = ret.headers['content-type'];
         fileCopyed.size = ret.headers['content-length'];
-        fileCopyed.name = req.headers['x-object-meta-orgname'];
+        fileCopyed.name = decodeURIComponent((req.headers['x-object-meta-encoded-org-name']));
         fileCopyed.etag = ret.headers.etag;
 
         res.status(response.statusCode).send(fileCopyed);
