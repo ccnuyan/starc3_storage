@@ -56,6 +56,21 @@ baseUrl: /storage/api
 
 客户端携带上传任务id调用云存储的上传服务。上传即普通的Form Upload
 
+回调
+```
+{
+  callbackBody:{},
+  file:{
+    "storage_object_id": "some_explicit_id",
+    "storage_box_id": "some_container_id",
+    "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "size": "1317546",
+    "name": "cyberhouse.docx",
+    "etag": "3c0f76edd03d855c8661ff53014cacb7"
+  }
+｝
+```
+
 ## 2 下载业务流程
 #### step 1 请求
 
@@ -149,7 +164,12 @@ status:201
 ```
 status:201
 {
-  _id: transactionId
+    "storage_object_id": "249dfb44-83c3-4650-98b4-2352faff937e",
+    "storage_box_id": "starc3_local_test",
+    "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "size": "1317546",
+    "name": "cyberhouse.docx",
+    "etag": "3c0f76edd03d855c8661ff53014cacb7"
 }
 ```
 
