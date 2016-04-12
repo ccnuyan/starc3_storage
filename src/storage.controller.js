@@ -43,7 +43,7 @@ var upload = function(req, res, next) {
         // req now has openStack info
         fileUploaded.contentType = ret.headers['content-type'];
         fileUploaded.size = ret.headers['content-length'];
-        fileUploaded.name = req.openstack.fileName;
+        fileUploaded.name = req.headers['x-object-meta-orgname'];
         fileUploaded.etag = ret.headers.etag;
 
         req.fileUploaded = fileUploaded;
@@ -88,11 +88,11 @@ var download = function(req, res, next) {
   var transaction = req.transaction;
   transaction.remove();
 
-  // if (transaction.fileName) {
-  //   var encodedFileName = encodeURIComponent(transaction.fileName);
-  //   var content_disposition = 'attachment;filename*=UTF-8\'\'' + encodedFileName;
-  //   res.header('Content-Disposition', content_disposition);
-  // }
+  if (transaction.fileName) {
+    var encodedFileName = encodeURIComponent(transaction.fileName);
+    var content_disposition = 'attachment;filename*=UTF-8\'\'' + encodedFileName;
+    res.header('Content-Disposition', content_disposition);
+  }
 
   //如果没有传filename 也可以去云里查文件的元数据获得
   swiftInitializer.init(function(err, swift) {
@@ -100,10 +100,12 @@ var download = function(req, res, next) {
       return next(err);
     }
 
-    swift.getFile(transaction.storage_box_id, transaction.storage_object_id, function(err) {
+    swift.getFile(transaction.storage_box_id, transaction.storage_object_id, function(err, ret) {
       if (err) {
         return next(err);
       }
+
+      if (ret) console.log(ret.headers);
     }, res);
   });
 };
@@ -135,12 +137,12 @@ var copy = function(req, res, next) {
         console.log(response.body);
 
         // req now has openStack info
-        fileUploaded.contentType = ret.headers['content-type'];
-        fileUploaded.size = ret.headers['content-length'];
-        fileUploaded.name = req.openstack.fileName;
-        fileUploaded.etag = ret.headers.etag;
+        fileCopyed.contentType = ret.headers['content-type'];
+        fileCopyed.size = ret.headers['content-length'];
+        fileCopyed.name = req.headers['x-object-meta-orgname'];
+        fileCopyed.etag = ret.headers.etag;
 
-        res.status(response.statusCode).send(fileUploaded);
+        res.status(response.statusCode).send(fileCopyed);
       });
   });
 };

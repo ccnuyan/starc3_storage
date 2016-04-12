@@ -70,8 +70,6 @@ function multiPart(options) {
       if (name) {
         part.name = name[1];
         part.filename = fileName(headerValue);
-        //multipart中的文件名 需要放在options.openstackFileName中返回给调用函数
-        options.openstackFileName = part.filename;
         options.headers['X-Object-Meta-OrgName'] = part.filename;
       }
     } else if (headerField === 'content-type') {
@@ -264,7 +262,6 @@ Swift.prototype.request = function(options, callback, pipe) {
 
     pipe.req.on('end', function() {
       pipe.req.openstack = {};
-      pipe.req.openstack.fileName = options.openstackFileName;
 
       uploadReq.on('error', function(err) {
         callback(err);
