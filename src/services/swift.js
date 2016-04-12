@@ -73,7 +73,7 @@ function multiPart(options) {
         //multipart中的文件名 需要放在options.openstackFileName中返回给调用函数
         options.openstackFileName = part.filename;
         // options.filename = part.filename;
-        options.headers.filename = part.filename;
+        options.headers['filename'] = part.filename;
 
       }
     } else if (headerField === 'content-type') {
@@ -355,7 +355,7 @@ Swift.prototype.createObject = Swift.prototype.updateObject = function(container
   var options = {
     path: '/v1.0/' + this.account + '/' + container + '/' + object,
     method: 'PUT',
-    filename: object,
+    // filename: object,
     headers: {
       'X-Auth-Token': this.token
         //, 'ETag': crypto.createHash('md5').update(container + '/' + object).digest('hex')
