@@ -38,13 +38,10 @@ var upload = function(req, res, next) {
           return next(err);
         }
 
-        console.log('ret.headers');
-        console.log(ret.headers);
-
         // req now has openStack info
         fileUploaded.contentType = ret.headers['content-type'];
         fileUploaded.size = ret.headers['content-length'];
-        // fileUploaded.name = req.openstack.fileName;
+        fileUploaded.name = req.openstack.fileName;
         fileUploaded.etag = ret.headers.etag;
 
         req.fileUploaded = fileUploaded;
@@ -89,11 +86,11 @@ var download = function(req, res, next) {
   var transaction = req.transaction;
   transaction.remove();
 
-  // if (transaction.fileName) {
-  //   var encodedFileName = encodeURIComponent(transaction.fileName);
-  //   var content_disposition = 'attachment;filename*=UTF-8\'\'' + encodedFileName;
-  //   res.header('Content-Disposition', content_disposition);
-  // }
+  if (transaction.fileName) {
+    var encodedFileName = encodeURIComponent(transaction.fileName);
+    var content_disposition = 'attachment;filename*=UTF-8\'\'' + encodedFileName;
+    res.header('Content-Disposition', content_disposition);
+  }
 
   //如果没有传filename 也可以去云里查文件的元数据获得
   swiftInitializer.init(function(err, swift) {
@@ -113,7 +110,7 @@ var copy = function(req, res, next) {
   var transaction = req.transaction;
   transaction.remove();
 
-  var fileCopied = {
+  var fileCopyed = {
     storage_object_id: uuid.v4(),
     storage_box_id: 'starc3_' + req.user.clientId
   };
@@ -123,32 +120,25 @@ var copy = function(req, res, next) {
       return next(err);
     }
 
-    swift.copyObject(fileCopied.storage_box_id,
-      fileCopied.storage_object_id,
+    swift.copyObject(fileCopyed.storage_box_id,
+      fileCopyed.storage_object_id,
       transaction.storage_box_id,
       transaction.storage_object_id,
       function(err, response) {
         if (err) {
           return next(err);
         }
+        console.log(response.statusCode);
+        console.log(response.headers);
+        console.log(response.body);
 
-        if (response.statusCode === 201) {
-          swift.retrieveObjectMetadata(fileCopied.storage_box_id, fileCopied.storage_object_id, function(err, ret) {
-            if (err || ret.statusCode !== 200) {
-              return next(err);
-            }
-            console.log(ret.headers);
-            // req now has openStack info
-            fileCopied.contentType = ret.headers['content-type'];
-            fileCopied.size = ret.headers['content-length'];
-            fileCopied.name = req.openstack.fileName;
-            fileCopied.etag = ret.headers.etag;
+        // req now has openStack info
+        fileUploaded.contentType = ret.headers['content-type'];
+        fileUploaded.size = ret.headers['content-length'];
+        fileUploaded.name = req.openstack.fileName;
+        fileUploaded.etag = ret.headers.etag;
 
-            res.status(201).send(fileCopied);
-          });
-        } else {
-          next('copy failed');
-        }
+        res.status(response.statusCode).send(fileUploaded);
       });
   });
 };
