@@ -128,9 +128,18 @@ var copy = function(req, res, next) {
         if (err) {
           return next(err);
         }
+        console.log(response.statusCode);
+        console.log(response.headers);
+        console.log(response.body);
 
-        res.status(response.status).send(response.body);
-      }, res);
+        // req now has openStack info
+        fileUploaded.contentType = ret.headers['content-type'];
+        fileUploaded.size = ret.headers['content-length'];
+        fileUploaded.name = req.openstack.fileName;
+        fileUploaded.etag = ret.headers.etag;
+
+        res.status(response.statusCode).send(fileUploaded);
+      });
   });
 };
 
