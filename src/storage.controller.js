@@ -89,11 +89,11 @@ var download = function(req, res, next) {
   var transaction = req.transaction;
   transaction.remove();
 
-  if (transaction.fileName) {
-    var encodedFileName = encodeURIComponent(transaction.fileName);
-    var content_disposition = 'attachment;filename*=UTF-8\'\'' + encodedFileName;
-    res.header('Content-Disposition', content_disposition);
-  }
+  // if (transaction.fileName) {
+  //   var encodedFileName = encodeURIComponent(transaction.fileName);
+  //   var content_disposition = 'attachment;filename*=UTF-8\'\'' + encodedFileName;
+  //   res.header('Content-Disposition', content_disposition);
+  // }
 
   //如果没有传filename 也可以去云里查文件的元数据获得
   swiftInitializer.init(function(err, swift) {
