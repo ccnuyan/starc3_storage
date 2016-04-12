@@ -72,7 +72,9 @@ function multiPart(options) {
         part.filename = fileName(headerValue);
         //multipart中的文件名 需要放在options.openstackFileName中返回给调用函数
         options.openstackFileName = part.filename;
-        options.filename = part.filename;
+        // options.filename = part.filename;
+        options.headers.filename = part.filename;
+
       }
     } else if (headerField === 'content-type') {
       part.mime = headerValue;
