@@ -171,9 +171,7 @@ var uploadTransactionId = function(req, res, next, id) {
                 return next(err);
             }
             if (!transaction) {
-                return next({
-                    message: 'upload transaction not found'
-                });
+                res.status(404).send('transaction outdated');
             }
 
             req.transaction = transaction;
@@ -188,9 +186,7 @@ var downloadTransactionId = function(req, res, next, id) {
                 return next(err);
             }
             if (!transaction) {
-                return next({
-                    message: 'download transaction not found'
-                });
+                res.status(404).send('transaction outdated');
             }
 
             req.transaction = transaction;
@@ -205,9 +201,7 @@ var copyTransactionId = function(req, res, next, id) {
                 return next(err);
             }
             if (!transaction) {
-                return next({
-                    message: 'download transaction not found'
-                });
+                res.status(404).send('transaction outdated');
             }
 
             req.transaction = transaction;
