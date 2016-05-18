@@ -94,6 +94,7 @@ baseUrl: /storage/api
     storage_object_id: 'some_explicit_id',
     //文件名
     fileName: 'abc.txt',
+    mode: 'preivew',
   }
 }
 ```

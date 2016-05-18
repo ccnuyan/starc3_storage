@@ -96,12 +96,6 @@ var download = function(req, res, next) {
             var content_disposition = 'attachment;filename*=UTF-8\'\'' + encodedFileName;
             res.header('Content-Disposition', content_disposition);
 
-            if (transaction.mode && transaction.mode === 'preview') {
-                res.header('Content-Type', decodeURIComponent((ret.headers['Content-Type'])));
-            } else {
-                res.header('Content-Type', 'application/octet-stream');
-            }
-
             swift.getFile(transaction.storage_box_id, transaction.storage_object_id, function(err, ret) {
                 if (err) {
                     return next(err);
@@ -109,19 +103,24 @@ var download = function(req, res, next) {
             }, res);
         };
 
-        if (transaction.fileName) {
-            callback(transaction.fileName);
-            res.header('Content-Type', transaction.content_type);
-        } else {
-            //如果没有传filename 也可以去云里查文件的元数据获得
-            swift.retrieveObjectMetadata(transaction.storage_box_id, transaction.storage_object_id, function(err, ret) {
-                if (err || ret.statusCode !== 200) {
-                    return next(err);
-                }
-                var filename = decodeURIComponent((ret.headers['x-object-meta-encoded-org-name']));
-                callback(filename);
-            });
-        }
+        swift.retrieveObjectMetadata(transaction.storage_box_id, transaction.storage_object_id, function(err, ret) {
+            if (err || ret.statusCode !== 200) {
+                return next(err);
+            }
+            var filename = decodeURIComponent((ret.headers['x-object-meta-encoded-org-name']));
+
+            if (transaction.fileName) {
+                filename = transaction.fileName;
+            }
+
+            if (transaction.mode && transaction.mode === 'preview') {
+                res.header('Content-Type', decodeURIComponent((ret.headers['Content-Type'])));
+            } else {
+                res.header('Content-Type', 'application/octet-stream');
+            }
+
+            callback(filename);
+        });
     });
 };
 
