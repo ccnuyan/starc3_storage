@@ -113,9 +113,8 @@ var download = function(req, res, next) {
                 filename = transaction.fileName;
             }
 
-            console.log(transaction);
-
             if (transaction.mode && transaction.mode === 'preview') {
+                console.log(ret.headers);
                 var ct = ret.headers['Content-Type'];
                 res.header('Content-Type', decodeURIComponent(ct));
             } else {
