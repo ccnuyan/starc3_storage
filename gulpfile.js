@@ -10,87 +10,87 @@ require('./src/transaction.model')();
 
 // Set NODE_ENV to 'dev'
 gulp.task('env:dev', function() {
-  process.env.NODE_ENV = 'development';
-  process.env.PORT = '3200';
+    process.env.NODE_ENV = 'development';
+    process.env.PORT = '3200';
 });
 
 // Nodemon task
 gulp.task('nodemon', function() {
-  return nodemon({
-    script: 'server.js',
-    ext: 'js',
-    watch: _.union('./config', './controller')
-  });
+    return nodemon({
+        script: 'server.js',
+        ext: 'js',
+        watch: _.union('./config', './controller')
+    });
 });
 
 gulp.task('eslint', function() {
-  return gulp.src(['**/*.js', '!node_modules/**'])
-    .pipe(eslint())
-    .pipe(eslint.format());
+    return gulp.src(['**/*.js', '!node_modules/**'])
+        .pipe(eslint())
+        .pipe(eslint.format());
 });
 
 gulp.task('debug', function(done) {
-  runSequence('env:dev', 'eslint', 'nodemon', done);
+    runSequence('env:dev', 'eslint', 'nodemon', done);
 });
 
 // Mocha tests task
 gulp.task('mocha-model', function(done) {
-  process.env.NODE_ENV = 'test';
-  var conf = require('./src/config/config').getConfig();
-  var testSuites = [];
-  testSuites.push('./tests/user.model.test.js');
+    process.env.NODE_ENV = 'test';
+    var conf = require('./src/config/config').getConfig();
+    var testSuites = [];
+    testSuites.push('./tests/user.model.test.js');
 
-  var connect = function() {
-    mongoose.connect(conf.dbconfig.url, function(err) {
-      if (err) {
-        done(err.message);
-      }
-      var error;
-      // Run the tests
-      gulp.src(testSuites)
-        .pipe(mocha({
-          reporter: 'spec',
-          timeout: 10000
-        }))
-        .on('error', function(err) {
-          console.log(err);
-          error = err;
-        })
-        .on('end', function() {
-          mongoose.disconnect(done);
+    var connect = function() {
+        mongoose.connect(conf.dbconfig.url, function(err) {
+            if (err) {
+                done(err.message);
+            }
+            var error;
+            // Run the tests
+            gulp.src(testSuites)
+                .pipe(mocha({
+                    reporter: 'spec',
+                    timeout: 10000
+                }))
+                .on('error', function(err) {
+                    console.log(err);
+                    error = err;
+                })
+                .on('end', function() {
+                    mongoose.disconnect(done);
+                });
         });
-    });
-  };
+    };
 
-  connect();
+    connect();
 });
 
 // Mocha tests task
 gulp.task('mocha-route', function(done) {
-  process.env.NODE_ENV = 'test';
-  var testSuites = [];
-  testSuites.push('./tests/user.duplication.route.test.js');
-  testSuites.push('./tests/user.registrition.route.test.js');
-  testSuites.push('./tests/user.resetpassword.route.test.js');
+    process.env.NODE_ENV = 'test';
+    var testSuites = [];
+    testSuites.push('./tests/user.duplication.route.test.js');
+    testSuites.push('./tests/user.registrition.route.test.js');
+    testSuites.push('./tests/user.resetpassword.route.test.js');
 
-  var error;
-  // Run the tests
-  var callback = function() {
-    gulp.src(testSuites)
-      .pipe(mocha({
-        reporter: 'spec',
-        timeout: 10000
-      }))
-      .on('error', function(err) {
-        console.log(err);
-        error = err;
-      })
-      .on('end', function() {
-        done(error);
-        process.exit();
-      });
-  };
+    var error;
+    // Run the tests
+    var callback = function() {
+        gulp.src(testSuites)
+            .pipe(mocha({
+                reporter: 'spec',
+                timeout: 10000
+            }))
+            .on('error', function(err) {
+                console.log(err);
+                error = err;
+            })
+            .on('end', function() {
+                done(error);
+                process.exit();
+            });
+    };
 
-  var testServer = require('./tests/testServer');
-  testServer.init(callback);
+    var testServer = require('./tests/testServer');
+    testServer.init(callback);
 });

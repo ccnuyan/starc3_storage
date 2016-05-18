@@ -9,19 +9,19 @@ var _ = require('lodash');
 var app, agent;
 
 module.exports = {
-  app: function() {
-    return app;
-  },
-  agent: function() {
-    return agent;
-  },
-  init: function(done) {
-    var callback = function(appback) {
-      app = appback;
-      agent = request.agent(app);
-      done();
-    };
+    app: function() {
+        return app;
+    },
+    agent: function() {
+        return agent;
+    },
+    init: function(done) {
+        var callback = function(appback) {
+            app = appback;
+            agent = request.agent(app);
+            done();
+        };
 
-    serverAgent(callback);
-  }
+        serverAgent(callback);
+    }
 };

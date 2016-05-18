@@ -10,17 +10,17 @@ var xAuthUser = conf.openStackConfig.xAuthUser;
 var xAuthKey = conf.openStackConfig.xAuthKey;
 
 exports.init = function(callback) {
-  var swift = new Swift({
-    user: xAuthUser,
-    pass: xAuthKey,
-    host: cloudUrl,
-    path: cloudAuthPath,
-    port: cloudPort
-  }, function(err, res) {
-    if (swift.account && swift.token) {
-      return callback(null, swift);
-    } else {
-      return callback('swift auth failed: ' + err);
-    }
-  });
+    var swift = new Swift({
+        user: xAuthUser,
+        pass: xAuthKey,
+        host: cloudUrl,
+        path: cloudAuthPath,
+        port: cloudPort
+    }, function(err, res) {
+        if (swift.account && swift.token) {
+            return callback(null, swift);
+        } else {
+            return callback('swift auth failed: ' + err);
+        }
+    });
 };

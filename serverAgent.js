@@ -12,12 +12,12 @@ var app = express();
 var conf = require('./src/config/config').getConfig();
 
 app.get('/service/status', function(req, res) {
-  res.status(200).send('ok');
+    res.status(200).send('ok');
 });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extended: true
+    extended: true
 }));
 
 app.use(crossDomainHanlder);
@@ -31,8 +31,8 @@ app.use(passport.initialize());
 
 // artifical delay and errors
 if (process.env.NODE_ENV === 'debug') {
-  app.use(handlers.ramdonDelay);
-  // app.use(handlers.ramdonError);
+    app.use(handlers.ramdonDelay);
+    // app.use(handlers.ramdonError);
 }
 
 app.use(require('./src/storage.controller'));
@@ -45,20 +45,20 @@ app.use(handlers.errorHandler);
 var mongoose = require('mongoose');
 //luanch api
 var connect = function(callback) {
-  var cstring = conf.dbconfig.url + conf.dbconfig.name;
-  console.log(cstring);
-  mongoose.connect(cstring, function(err) {
-    if (err) {
-      console.log(err.message);
-      setTimeout(connect, 10000);
-      mongoose.connection.close();
-      return;
-    }
-    app.listen(conf.port, function() {
-      console.log('Express server listening on port ' + conf.port);
-      if (callback) callback(app);
+    var cstring = conf.dbconfig.url + conf.dbconfig.name;
+    console.log(cstring);
+    mongoose.connect(cstring, function(err) {
+        if (err) {
+            console.log(err.message);
+            setTimeout(connect, 10000);
+            mongoose.connection.close();
+            return;
+        }
+        app.listen(conf.port, function() {
+            console.log('Express server listening on port ' + conf.port);
+            if (callback) callback(app);
+        });
     });
-  });
 };
 
 module.exports = connect;
