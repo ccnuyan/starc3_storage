@@ -114,8 +114,7 @@ var download = function(req, res, next) {
             }
 
             if (transaction.mode && transaction.mode === 'preview') {
-                console.log(ret.headers);
-                var ct = ret.headers['Content-Type'];
+                var ct = ret.headers['content-type'];
                 res.header('Content-Type', decodeURIComponent(ct));
             } else {
                 res.header('Content-Type', 'application/octet-stream');
