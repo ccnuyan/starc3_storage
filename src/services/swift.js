@@ -190,7 +190,6 @@ Swift.prototype.request = function(options, callback, pipe) {
     var downloadReq = protocol.request(options, function(res) {
 
       pipe.res.header('Content-Length', res.headers['content-length']);
-      pipe.res.header('Content-Type', res.headers['content-type']);
 
       res.on('data', function(buffer) {
         if (res.statusCode >= 400) {
@@ -360,6 +359,9 @@ Swift.prototype.createObject = Swift.prototype.updateObject = function(container
     options.headers['Content-Length'] = req.headers['content-length'];
   } else {
     var boundary = req.headers['content-type'].match(/boundary=(?:"([^"]+)"|([^;]+))/i);
+    if(!boundary){
+        throw new Error('format error');
+    }
     extend(options, {
       contentLength: req.headers['content-length'],
       encoding: 'utf-8',
