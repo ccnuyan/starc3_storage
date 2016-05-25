@@ -7,7 +7,7 @@
     "dev": "npm run hot-dev-web-server & npm run start-web-dev & npm run start-api-dev &",
     "itaobao": "npm install --registry=https://registry.npm.taobao.org/",
     "start-api-dev": "gulp debug",
-    "start-api": "node ./server.js",
+    "start-api": "forever start ./server.js",
     "test-model": "gulp mocha-model",
     "test-route": "gulp mocha-route"
   },
