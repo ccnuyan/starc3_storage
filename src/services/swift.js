@@ -168,9 +168,6 @@ Swift.prototype.request = function(options, callback, pipe) {
             res.on('end', function(err) {
                 res.body = buffers.join('');
                 if (callback) {
-                    if (err) {
-                        console.log(err);
-                    }
                     callback(err, res);
                 }
             });
@@ -226,8 +223,6 @@ Swift.prototype.request = function(options, callback, pipe) {
 
         var parser = options.boundary ? multiPart(extend(options, {
             onHeadersEnd: function() {
-                console.log('options');
-                console.log(options);
                 uploadReq = protocol.request(options, function(res) {
 
                     res.on('data', function() {
@@ -248,6 +243,9 @@ Swift.prototype.request = function(options, callback, pipe) {
                     });
                 });
 
+                uploadReq.on('error', function(err) {
+                    callback(err);
+                });
             },
             onPartData: function(buffer) {
                 uploadReq.write(buffer);
@@ -260,11 +258,11 @@ Swift.prototype.request = function(options, callback, pipe) {
         });
 
         pipe.req.on('end', function() {
-            uploadReq.on('error', function(err) {
-                callback(err);
-            });
-
-            uploadReq.end();
+            if (uploadReq) {
+                uploadReq.end();
+            } else {
+                callback('uploadReq undefined');
+            }
         });
     }
 
