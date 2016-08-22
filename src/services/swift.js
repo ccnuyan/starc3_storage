@@ -356,6 +356,7 @@ Swift.prototype.createObject = Swift.prototype.updateObject = function(container
     if (req.xhr) {
         options.headers['Content-Length'] = req.headers['content-length'];
     } else {
+        //TODO what if the req doesn't have content-type ?
         var boundary = req.headers['content-type'].match(/boundary=(?:"([^"]+)"|([^;]+))/i);
         if (!boundary) {
             throw new Error('format error');
