@@ -340,15 +340,6 @@ Swift.prototype.getFile = function(container, object, callback, res) {
     });
 };
 
-// Object stream on pipe
-Swift.prototype.prevFile = function(container, object, callback, res) {
-    this.request({
-        path: '/v1.0/' + this.account + '/' + container + '/' + object
-    }, callback, {
-        res: res
-    });
-};
-
 // Create/Update Object
 Swift.prototype.createObject = Swift.prototype.updateObject = function(container, object, callback, req) {
     var options = {
@@ -366,6 +357,9 @@ Swift.prototype.createObject = Swift.prototype.updateObject = function(container
         options.headers['Content-Length'] = req.headers['content-length'];
     } else {
         //TODO what if the req doesn't have content-type ?
+        if (!req.headers['content-type']) {
+            throw new Error('content-type not found');
+        }
         var boundary = req.headers['content-type'].match(/boundary=(?:"([^"]+)"|([^;]+))/i);
         if (!boundary) {
             throw new Error('format error');
