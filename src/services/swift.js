@@ -340,6 +340,15 @@ Swift.prototype.getFile = function(container, object, callback, res) {
     });
 };
 
+// Object stream on pipe
+Swift.prototype.prevFile = function(container, object, callback, res) {
+    this.request({
+        path: '/v1.0/' + this.account + '/' + container + '/' + object
+    }, callback, {
+        res: res
+    });
+};
+
 // Create/Update Object
 Swift.prototype.createObject = Swift.prototype.updateObject = function(container, object, callback, req) {
     var options = {
