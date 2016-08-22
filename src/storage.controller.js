@@ -91,10 +91,17 @@ var download = function(req, res, next) {
             return next(err);
         }
 
-        var callback = function(filename) {
+        var callback = function(filename, isprev) {
             var encodedFileName = encodeURIComponent(filename);
             var content_disposition = 'attachment;filename*=UTF-8\'\'' + encodedFileName;
-            res.header('Content-Disposition', content_disposition);
+            if(!!isprev)
+            {
+                res.header('Content-Disposition', 'inline');
+            }
+            else
+            {
+                res.header('Content-Disposition', content_disposition);
+            }
 
             swift.getFile(transaction.storage_box_id, transaction.storage_object_id, function(err, ret) {
                 if (err) {
