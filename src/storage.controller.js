@@ -123,11 +123,13 @@ var download = function(req, res, next) {
             if (transaction.mode && transaction.mode === 'preview') {
                 var ct = ret.headers['content-type'];
                 res.header('Content-Type', decodeURIComponent(ct));
+
+                callback(filename, true);
             } else {
                 res.header('Content-Type', 'application/octet-stream');
-            }
 
-            callback(filename);
+                callback(filename);
+            }
         });
     });
 };
