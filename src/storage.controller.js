@@ -30,11 +30,15 @@ var upload = function(req, res, next) {
         }
         swift.createObject(fileUploaded.storage_box_id, fileUploaded.storage_object_id, function(err, ret) {
             if (err || ret.statusCode !== 201) {
+                err.transaction = transaction;
+                err.action = 'createObject';
                 return next(err);
             }
 
             swift.retrieveObjectMetadata(fileUploaded.storage_box_id, fileUploaded.storage_object_id, function(err, ret) {
                 if (err || ret.statusCode !== 200) {
+                    err.transaction = transaction;
+                    err.action = 'retrieveObjectMetadata';
                     return next(err);
                 }
 
@@ -69,10 +73,11 @@ var uploadCallback = function(req, res, next) {
             callbackBody: transaction.requestBody,
             file: file
         }
-    }, function(error, response, body) {
-        if (error) {
-            error.transaction = transaction;
-            return next(error);
+    }, function(err, response, body) {
+        if (err) {
+            err.transaction = transaction;
+            err.action = 'uploadCallback';
+            return next(err);
         }
         if (response.statusCode >= 301 && response.statusCode <= 307) {
             var location = response.headers.location;
