@@ -34,7 +34,7 @@ var upload = function(req, res, next) {
                 err = {transaction:transaction};
                 err.action = 'createObject';
                 ret&&ret.statusCode&&console.log(ret.statusCode);
-                ret&&ret.body&&console.log(ret.body);
+                ret&&ret.body&&console.log(JSON.stringify(ret.body,null,2));
                 return next(err);
             }
 
@@ -44,7 +44,7 @@ var upload = function(req, res, next) {
                     err = {transaction:transaction};
                     err.action = 'retrieveObjectMetadata';
                     ret&&ret.statusCode&&console.log(ret.statusCode);
-                    ret&&ret.body&&console.log(ret.body);
+                    ret&&ret.body&&console.log(JSON.stringify(ret.body,null,2));
                     return next(err);
                 }
 
