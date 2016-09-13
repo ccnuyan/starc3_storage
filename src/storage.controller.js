@@ -33,6 +33,8 @@ var upload = function(req, res, next) {
                 if(!err)err={};
                 err = {transaction:transaction};
                 err.action = 'createObject';
+                ret&&ret.statusCode&&console.log(ret.statusCode);
+                ret&&ret.body&&console.log(ret.body);
                 return next(err);
             }
 
@@ -41,6 +43,8 @@ var upload = function(req, res, next) {
                     if(!err)err={};
                     err = {transaction:transaction};
                     err.action = 'retrieveObjectMetadata';
+                    ret&&ret.statusCode&&console.log(ret.statusCode);
+                    ret&&ret.body&&console.log(ret.body);
                     return next(err);
                 }
 
@@ -77,7 +81,6 @@ var uploadCallback = function(req, res, next) {
         }
     }, function(err, response, body) {
         if (err) {
-            if(!err)err={};
             err = {transaction:transaction};
             err.action = 'uploadCallback';
             return next(err);
