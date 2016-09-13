@@ -71,6 +71,7 @@ var uploadCallback = function(req, res, next) {
         }
     }, function(error, response, body) {
         if (error) {
+            error.transaction = transaction;
             return next(error);
         }
         if (response.statusCode >= 301 && response.statusCode <= 307) {
