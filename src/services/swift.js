@@ -230,13 +230,13 @@ Swift.prototype.request = function (options, callback, pipe) {
                                 });
                             }
                         } else {
-                            callback();
+                            callback(null, res);
                         }
                     });
 
-                    res.on('end', function (err) {
-                        callback(err, res);
-                    });
+                    // res.on('end', function (err) {
+                    //     callback(err, res);
+                    // });
                 });
 
                 uploadReq.on('error', function (err) {

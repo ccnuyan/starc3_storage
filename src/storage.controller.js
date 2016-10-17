@@ -14,7 +14,7 @@ var UploadTransaction = mongoose.model('UploadTransaction');
 var DownloadTransaction = mongoose.model('DownloadTransaction');
 var CopyTransaction = mongoose.model('CopyTransaction');
 
-var upload = function(req, res, next) {
+var upload = function (req, res, next) {
     var transaction = req.transaction;
     transaction.remove();
 
@@ -23,28 +23,28 @@ var upload = function(req, res, next) {
         storage_box_id: transaction.storage_box_id,
     };
 
-    swiftInitializer.init(function(err, swift) {
+    swiftInitializer.init(function (err, swift) {
 
         if (err) {
             return next(err);
         }
-        swift.createObject(fileUploaded.storage_box_id, fileUploaded.storage_object_id, function(err, ret) {
+        swift.createObject(fileUploaded.storage_box_id, fileUploaded.storage_object_id, function (err, ret) {
             if (err || ret.statusCode !== 201) {
-                if(!err)err={};
-                err = {transaction:transaction};
+                if (!err) err = {};
+                err = { transaction: transaction };
                 err.action = 'createObject';
-                ret&&ret.statusCode&&console.log(ret.statusCode);
-                ret&&ret.body&&console.log(JSON.stringify(ret.body,null,2));
+                ret && ret.statusCode && console.log(ret.statusCode);
+                ret && ret.body && console.log(JSON.stringify(ret.body, null, 2));
                 return next(err);
             }
 
-            swift.retrieveObjectMetadata(fileUploaded.storage_box_id, fileUploaded.storage_object_id, function(err, ret) {
+            swift.retrieveObjectMetadata(fileUploaded.storage_box_id, fileUploaded.storage_object_id, function (err, ret) {
                 if (err || ret.statusCode !== 200) {
-                    if(!err)err={};
-                    err = {transaction:transaction};
+                    if (!err) err = {};
+                    err = { transaction: transaction };
                     err.action = 'retrieveObjectMetadata';
-                    ret&&ret.statusCode&&console.log(ret.statusCode);
-                    ret&&ret.body&&console.log(JSON.stringify(ret.body,null,2));
+                    ret && ret.statusCode && console.log(ret.statusCode);
+                    ret && ret.body && console.log(JSON.stringify(ret.body, null, 2));
                     return next(err);
                 }
 
@@ -61,7 +61,7 @@ var upload = function(req, res, next) {
     });
 };
 
-var uploadCallback = function(req, res, next) {
+var uploadCallback = function (req, res, next) {
     var transaction = req.transaction.toObject();
     var file = req.fileUploaded;
 
@@ -79,9 +79,9 @@ var uploadCallback = function(req, res, next) {
             callbackBody: transaction.requestBody,
             file: file
         }
-    }, function(err, response, body) {
+    }, function (err, response, body) {
         if (err) {
-            err = {transaction:transaction};
+            err = { transaction: transaction };
             err.action = 'uploadCallback';
             return next(err);
         }
@@ -94,35 +94,33 @@ var uploadCallback = function(req, res, next) {
     });
 };
 
-var download = function(req, res, next) {
+var download = function (req, res, next) {
     var transaction = req.transaction;
     transaction.remove();
 
-    swiftInitializer.init(function(err, swift) {
+    swiftInitializer.init(function (err, swift) {
         if (err) {
             return next(err);
         }
 
-        var callback = function(filename, isprev) {
+        var callback = function (filename, isprev) {
             var encodedFileName = encodeURIComponent(filename);
             var content_disposition = 'attachment;filename*=UTF-8\'\'' + encodedFileName;
-            if(!!isprev)
-            {
+            if (!!isprev) {
                 res.header('Content-Disposition', 'inline');
             }
-            else
-            {
+            else {
                 res.header('Content-Disposition', content_disposition);
             }
 
-            swift.getFile(transaction.storage_box_id, transaction.storage_object_id, function(err, ret) {
+            swift.getFile(transaction.storage_box_id, transaction.storage_object_id, function (err, ret) {
                 if (err) {
                     return next(err);
                 }
             }, res);
         };
 
-        swift.retrieveObjectMetadata(transaction.storage_box_id, transaction.storage_object_id, function(err, ret) {
+        swift.retrieveObjectMetadata(transaction.storage_box_id, transaction.storage_object_id, function (err, ret) {
             if (err || ret.statusCode !== 200) {
                 return next(err);
             }
@@ -146,7 +144,7 @@ var download = function(req, res, next) {
     });
 };
 
-var copy = function(req, res, next) {
+var copy = function (req, res, next) {
     var transaction = req.transaction;
     transaction.remove();
 
@@ -155,7 +153,7 @@ var copy = function(req, res, next) {
         storage_box_id: 'starc3_' + req.user.clientId
     };
     //如果没有传filename 也可以去云里查文件的元数据获得
-    swiftInitializer.init(function(err, swift) {
+    swiftInitializer.init(function (err, swift) {
         if (err) {
             return next(err);
         }
@@ -164,12 +162,12 @@ var copy = function(req, res, next) {
             fileCopyed.storage_object_id,
             transaction.storage_box_id,
             transaction.storage_object_id,
-            function(err, ret) {
+            function (err, ret) {
                 if (err) {
                     return next(err);
                 }
 
-                swift.retrieveObjectMetadata(fileCopyed.storage_box_id, fileCopyed.storage_object_id, function(err, ret) {
+                swift.retrieveObjectMetadata(fileCopyed.storage_box_id, fileCopyed.storage_object_id, function (err, ret) {
                     if (err || ret.statusCode !== 200) {
                         return next(err);
                     }
@@ -185,9 +183,9 @@ var copy = function(req, res, next) {
     });
 };
 
-var uploadTransactionId = function(req, res, next, id) {
+var uploadTransactionId = function (req, res, next, id) {
     UploadTransaction.findById(id)
-        .exec(function(err, transaction) {
+        .exec(function (err, transaction) {
             if (err) {
                 return next(err);
             }
@@ -200,9 +198,9 @@ var uploadTransactionId = function(req, res, next, id) {
         });
 };
 
-var downloadTransactionId = function(req, res, next, id) {
+var downloadTransactionId = function (req, res, next, id) {
     DownloadTransaction.findById(id)
-        .exec(function(err, transaction) {
+        .exec(function (err, transaction) {
             if (err) {
                 return next(err);
             }
@@ -215,9 +213,9 @@ var downloadTransactionId = function(req, res, next, id) {
         });
 };
 
-var copyTransactionId = function(req, res, next, id) {
+var copyTransactionId = function (req, res, next, id) {
     CopyTransaction.findById(id)
-        .exec(function(err, transaction) {
+        .exec(function (err, transaction) {
             if (err) {
                 return next(err);
             }
@@ -230,7 +228,7 @@ var copyTransactionId = function(req, res, next, id) {
         });
 };
 
-var requestTransaction = function(req, res, next) {
+var requestTransaction = function (req, res, next) {
     var transaction;
     switch (req.body.requestType) {
         case 'upload':
@@ -254,7 +252,7 @@ var requestTransaction = function(req, res, next) {
                 message: 'request type unrecogonized'
             });
     }
-    transaction.save(function(err, transRet) {
+    transaction.save(function (err, transRet) {
         if (err) {
             return next(err);
         }
