@@ -229,8 +229,8 @@ Swift.prototype.request = function (options, callback, pipe) {
                             });
                         }
                         else {
-                            callback(null, res);
                             console.log('data else');
+                            callback(null, res);
                         }
                     });
 
