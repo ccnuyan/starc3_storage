@@ -220,6 +220,20 @@ Swift.prototype.request = function (options, callback, pipe) {
         var parser = options.boundary ? multiPart(extend(options, {
             onHeadersEnd: function () {
                 uploadReq = protocol.request(options, function (res) {
+
+                    res.on('data', function () {
+                        if (res.statusCode >= 400) {
+                            if (callback) {
+                                callback({
+                                    statusCode: res.statusCode,
+                                    body: res.body
+                                });
+                            }
+                        } else {
+                            callback();
+                        }
+                    });
+
                     res.on('end', function (err) {
                         callback(err, res);
                     });
