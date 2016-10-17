@@ -221,6 +221,8 @@ Swift.prototype.request = function (options, callback, pipe) {
             onHeadersEnd: function () {
                 uploadReq = protocol.request(options, function (res) {
 
+                    var flag = false;
+
                     res.on('data', function () {
                         if (res.statusCode >= 400) {
                             if (callback) {
@@ -229,14 +231,21 @@ Swift.prototype.request = function (options, callback, pipe) {
                                     body: res.body
                                 });
                             }
-                        } else {
-                            callback(null, res);
+                        }
+                        else {
+                            if (!flag) {
+                                flag = true;
+                                callback(null, res);
+                            }
                         }
                     });
 
-                    // res.on('end', function (err) {
-                    //     callback(err, res);
-                    // });
+                    res.on('end', function (err) {
+                        if (!flag) {
+                            flag = true;
+                            callback(err, res);
+                        }
+                    });
                 });
 
                 uploadReq.on('error', function (err) {
