@@ -216,7 +216,6 @@ Swift.prototype.request = function (options, callback, pipe) {
         var uploadReq;
         var bytesReceived = 0;
         var filePartFound = false;
-        var filePartSend = false;
 
 
         var parser = options.boundary ? multiPart(extend(options, {
@@ -228,29 +227,16 @@ Swift.prototype.request = function (options, callback, pipe) {
                 if (part.name === 'file' && part.mime && part.filename) {
                     console.log(part);
                     filePartFound = true;
+                    //encloud request
                     uploadReq = protocol.request(options, function (res) {
-                        // res.on('data', function () {
-                        //     console.log('data');
-                        //     if (res.statusCode >= 400) {
-                        //         console.log('data if');
-                        //         callback({
-                        //             statusCode: res.statusCode,
-                        //             body: res.body
-                        //         });
-                        //     }
-                        //     else {
-                        //         console.log('data else');
-                        //         callback(null, res);
-                        //     }
-                        // });
-
+                        //encloud complated
                         res.on('end', function (err) {
                             console.log('end');
-                            filePartSend = true;
                             callback(err, res);
                         });
                     });
-
+                    
+                    //encloud error
                     uploadReq.on('error', function (err) {
                         console.log('uploadReq error:' + err);
                     });
@@ -258,19 +244,23 @@ Swift.prototype.request = function (options, callback, pipe) {
             },
             onPartData: function (buffer) {
                 console.log('onPartData');
-                if (filePartFound && !filePartSend && uploadReq) {
+                if (filePartFound && uploadReq) {
                     uploadReq.write(buffer);
                 }
             }
         })) : null;
 
+        //upload data
         pipe.req.on('data', function (buffer) {
+            console.log('pipe.req.on data');
             parser.write(buffer);
             pipe.req.emit('progress', bytesReceived += buffer.length, options.contentLength || options.headers['Content-Length']);
         });
 
+        //upload complated
         pipe.req.on('end', function () {
             if (uploadReq && filePartFound) {
+                console.log('pipe.req.on end');
                 uploadReq.end();
             } else {
                 callback('file part not found');
