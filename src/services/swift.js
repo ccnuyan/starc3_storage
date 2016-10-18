@@ -231,17 +231,17 @@ Swift.prototype.request = function (options, callback, pipe) {
                     uploadReq = protocol.request(options, function (res) {
                         res.on('data', function () {
                             console.log('encloud on data');
-                            if (res.statusCode >= 400) {
-                                console.log('data if');
-                                callback({
-                                    statusCode: res.statusCode,
-                                    body: res.body
-                                });
-                            }
-                            else {
-                                console.log('data else');
-                                callback(null, res);
-                            }
+                            // if (res.statusCode >= 400) {
+                            //     console.log('data if');
+                            //     callback({
+                            //         statusCode: res.statusCode,
+                            //         body: res.body
+                            //     });
+                            // }
+                            // else {
+                            //     console.log('data else');
+                            //     callback(null, res);
+                            // }
                         });
                         //encloud end
                         res.on('end', function (err) {
