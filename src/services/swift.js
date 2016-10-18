@@ -226,7 +226,6 @@ Swift.prototype.request = function (options, callback, pipe) {
                 }
 
                 if (part.name === 'file' && part.mime && part.filename) {
-
                     filePartFound = true;
                     uploadReq = protocol.request(options, function (res) {
                         res.on('data', function () {
@@ -249,11 +248,11 @@ Swift.prototype.request = function (options, callback, pipe) {
                             callback(err, res);
                         });
                     });
-                }
 
-                uploadReq.on('error', function (err) {
-                    console.log('uploadReq error:' + err);
-                });
+                    uploadReq.on('error', function (err) {
+                        console.log('uploadReq error:' + err);
+                    });
+                }
             },
             onPartData: function (buffer) {
                 console.log('onPartData');
