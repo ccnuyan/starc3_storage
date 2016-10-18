@@ -229,20 +229,20 @@ Swift.prototype.request = function (options, callback, pipe) {
                     console.log(part);
                     filePartFound = true;
                     uploadReq = protocol.request(options, function (res) {
-                        res.on('data', function () {
-                            console.log('data');
-                            if (res.statusCode >= 400) {
-                                console.log('data if');
-                                callback({
-                                    statusCode: res.statusCode,
-                                    body: res.body
-                                });
-                            }
-                            else {
-                                console.log('data else');
-                                callback(null, res);
-                            }
-                        });
+                        // res.on('data', function () {
+                        //     console.log('data');
+                        //     if (res.statusCode >= 400) {
+                        //         console.log('data if');
+                        //         callback({
+                        //             statusCode: res.statusCode,
+                        //             body: res.body
+                        //         });
+                        //     }
+                        //     else {
+                        //         console.log('data else');
+                        //         callback(null, res);
+                        //     }
+                        // });
 
                         res.on('end', function (err) {
                             console.log('end');
