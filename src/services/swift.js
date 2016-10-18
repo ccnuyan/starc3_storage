@@ -229,21 +229,22 @@ Swift.prototype.request = function (options, callback, pipe) {
                     filePartFound = true;
                     //encloud request
                     uploadReq = protocol.request(options, function (res) {
-                        //encloud complated
+                        //encloud end
                         res.on('end', function (err) {
-                            console.log('end');
+                            console.log('encloud end');
                             callback(err, res);
                         });
                     });
-                    
+
+                    console.log('encloud created');
                     //encloud error
                     uploadReq.on('error', function (err) {
-                        console.log('uploadReq error:' + err);
+                        console.log('encloud uploadReq error:' + err);
                     });
                 }
             },
             onPartData: function (buffer) {
-                console.log('onPartData');
+                console.log('upload request onPartData');
                 if (filePartFound && uploadReq) {
                     uploadReq.write(buffer);
                 }
@@ -252,15 +253,16 @@ Swift.prototype.request = function (options, callback, pipe) {
 
         //upload data
         pipe.req.on('data', function (buffer) {
-            console.log('pipe.req.on data');
+            console.log('pipe.req on data');
             parser.write(buffer);
             pipe.req.emit('progress', bytesReceived += buffer.length, options.contentLength || options.headers['Content-Length']);
         });
 
         //upload complated
         pipe.req.on('end', function () {
+            console.log('pipe.req on end');
             if (uploadReq && filePartFound) {
-                console.log('pipe.req.on end');
+                console.log('try to manually end encloud request');
                 uploadReq.end();
             } else {
                 callback('file part not found');
