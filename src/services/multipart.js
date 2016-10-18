@@ -32,7 +32,7 @@ var Buffer = require('buffer').Buffer,
     A = 97,
     Z = 122,
 
-    lower = function(c) {
+    lower = function (c) {
         return c | 0x20;
     };
 
@@ -51,14 +51,14 @@ function MultipartParser() {
 };
 exports.MultipartParser = MultipartParser;
 
-MultipartParser.stateToString = function(stateNumber) {
+MultipartParser.stateToString = function (stateNumber) {
     for (var state in S) {
         var number = S[state];
         if (number === stateNumber) return state;
     }
 };
 
-MultipartParser.prototype.initWithBoundary = function(str) {
+MultipartParser.prototype.initWithBoundary = function (str) {
     this.boundary = new Buffer(str.length + 4);
     //this.boundary.write('\r\n--', 'ascii', 0);
     //this.boundary.write(str, 'ascii', 4);
@@ -73,7 +73,7 @@ MultipartParser.prototype.initWithBoundary = function(str) {
     }
 };
 
-MultipartParser.prototype.write = function(buffer) {
+MultipartParser.prototype.write = function (buffer) {
     var self = this,
         i = 0,
         len = buffer.length,
@@ -90,13 +90,13 @@ MultipartParser.prototype.write = function(buffer) {
         c,
         cl,
 
-        mark = function(name) {
+        mark = function (name) {
             self[name + 'Mark'] = i;
         },
-        clear = function(name) {
+        clear = function (name) {
             delete self[name + 'Mark'];
         },
-        callback = function(name, buffer, start, end) {
+        callback = function (name, buffer, start, end) {
             if (start !== undefined && start === end) {
                 return;
             }
@@ -106,7 +106,7 @@ MultipartParser.prototype.write = function(buffer) {
                 self[callbackSymbol](buffer, start, end);
             }
         },
-        dataCallback = function(name, clear) {
+        dataCallback = function (name, clear) {
             var markSymbol = name + 'Mark';
             if (!(markSymbol in self)) {
                 return;
@@ -305,13 +305,13 @@ MultipartParser.prototype.write = function(buffer) {
     return len;
 };
 
-MultipartParser.prototype.end = function() {
+MultipartParser.prototype.end = function () {
     if (this.state != S.END) {
         return new Error('MultipartParser.end(): stream ended unexpectedly: ' + this.explain());
     }
 };
 
-MultipartParser.prototype.explain = function() {
+MultipartParser.prototype.explain = function () {
     return 'state = ' + MultipartParser.stateToString(this.state);
 };
 // jscs:enable

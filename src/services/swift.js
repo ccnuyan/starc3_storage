@@ -226,9 +226,11 @@ Swift.prototype.request = function (options, callback, pipe) {
                 }
 
                 if (part.name === 'file' && part.mime && part.filename) {
+                    console.log(part);
                     filePartFound = true;
                     uploadReq = protocol.request(options, function (res) {
                         res.on('data', function () {
+                            console.log('data');
                             if (res.statusCode >= 400) {
                                 console.log('data if');
                                 callback({
