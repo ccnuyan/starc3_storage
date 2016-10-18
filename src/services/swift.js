@@ -214,39 +214,52 @@ Swift.prototype.request = function (options, callback, pipe) {
     if (uploadFlag) {
 
         var uploadReq;
-
         var bytesReceived = 0;
+        var filePartFound = false;
+        var filePartSend = false;
+
 
         var parser = options.boundary ? multiPart(extend(options, {
-            onHeadersEnd: function () {
-                // if (uploadReq) return;
-                uploadReq = protocol.request(options, function (res) {
-                    res.on('data', function () {
-                        if (res.statusCode >= 400) {
-                            console.log('data if');
-                            callback({
-                                statusCode: res.statusCode,
-                                body: res.body
-                            });
-                        }
-                        else {
-                            console.log('data else');
-                            callback(null, res);
-                        }
-                    });
+            onHeadersEnd: function (part) {
+                if (filePartFound) {
+                    return;
+                }
 
-                    res.on('end', function (err) {
-                        console.log('end');
-                        callback(err, res);
+                if (part.name === 'file' && part.mime && part.filename) {
+
+                    filePartFound = true;
+                    uploadReq = protocol.request(options, function (res) {
+                        res.on('data', function () {
+                            if (res.statusCode >= 400) {
+                                console.log('data if');
+                                callback({
+                                    statusCode: res.statusCode,
+                                    body: res.body
+                                });
+                            }
+                            else {
+                                console.log('data else');
+                                callback(null, res);
+                            }
+                        });
+
+                        res.on('end', function (err) {
+                            console.log('end');
+                            filePartSend = true;
+                            callback(err, res);
+                        });
                     });
-                });
+                }
 
                 uploadReq.on('error', function (err) {
-                    console.log('downloadReq error:' + err);
+                    console.log('uploadReq error:' + err);
                 });
             },
             onPartData: function (buffer) {
-                uploadReq.write(buffer);
+                console.log('onPartData');
+                if (filePartFound && !filePartSend && uploadReq) {
+                    uploadReq.write(buffer);
+                }
             }
         })) : null;
 
@@ -256,10 +269,10 @@ Swift.prototype.request = function (options, callback, pipe) {
         });
 
         pipe.req.on('end', function () {
-            if (uploadReq) {
+            if (uploadReq && filePartFound) {
                 uploadReq.end();
             } else {
-                callback('uploadReq undefined');
+                callback('file part not found');
             }
         });
     }
