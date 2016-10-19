@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(crossDomainHanlder);
-app.use(logger('dev'));
+// app.use(logger('dev'));
 
 require('./src/transaction.model')();
 require('./src/client')();

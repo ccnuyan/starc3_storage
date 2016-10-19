@@ -174,7 +174,7 @@ Swift.prototype.request = function (options, callback, pipe) {
         });
 
         businessReq.on('error', function (err) {
-            console.log('businessReq error:' + err);
+            // console.log('businessReq error:' + err);
         });
 
         return businessReq.end();
@@ -205,7 +205,7 @@ Swift.prototype.request = function (options, callback, pipe) {
         });
 
         downloadReq.on('error', function (err) {
-            console.log('downloadReq error:' + err);
+            // console.log('downloadReq error:' + err);
         });
 
         return downloadReq.end();
@@ -225,42 +225,31 @@ Swift.prototype.request = function (options, callback, pipe) {
                 }
 
                 if (part.name === 'file' && part.mime && part.filename) {
-                    console.log(part);
+                    // console.log(part);
                     filePartFound = true;
                     //encloud request
                     uploadReq = protocol.request(options, function (res) {
                         res.on('data', function () {
-                            console.log('encloud on data');
-                            // if (res.statusCode >= 400) {
-                            //     console.log('data if');
-                            //     callback({
-                            //         statusCode: res.statusCode,
-                            //         body: res.body
-                            //     });
-                            // }
-                            // else {
-                            //     console.log('data else');
-                            //     callback(null, res);
-                            // }
+                            // console.log('encloud on data');
                         });
                         //encloud end
-                        res.on('end', function (err) {
-                            console.log('encloud end');
-                            callback(err, res);
+                        res.on('end', function () {
+                            // console.log('encloud end');
+                            callback(null, res);
                         });
                     });
 
-                    console.log('encloud created');
+                    // console.log('encloud created');
                     //encloud error
                     uploadReq.on('error', function (err) {
-                        console.log('encloud uploadReq error:' + err);
+                        // console.log('encloud uploadReq error:' + err);
                     });
                 }
             },
             onPartData: function (buffer) {
-                console.log('upload request onPartData');
+                // console.log('upload request onPartData');
                 if (filePartFound && uploadReq) {
-                    console.log('pipe upload partData to encloud request');
+                    // console.log('pipe upload partData to encloud request');
                     uploadReq.write(buffer);
                 }
             }
@@ -268,16 +257,16 @@ Swift.prototype.request = function (options, callback, pipe) {
 
         //upload data
         pipe.req.on('data', function (buffer) {
-            console.log('upload request on data, pipe to multipart parser');
+            // console.log('upload request on data, pipe to multipart parser');
             parser.write(buffer);
             pipe.req.emit('progress', bytesReceived += buffer.length, options.contentLength || options.headers['Content-Length']);
         });
 
         //upload complated
         pipe.req.on('end', function () {
-            console.log('upload request on end');
+            // console.log('upload request on end');
             if (uploadReq && filePartFound) {
-                console.log('try to manually end encloud request');
+                // console.log('try to manually end encloud request');
                 uploadReq.end();
             } else {
                 callback('file part not found');

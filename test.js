@@ -17,6 +17,7 @@ var req = http.request(options, (res) => {
     });
     //or else there will be no 'end' event
     res.on('end', () => {
+        console.log(res.statusCode);
         console.log('No more data in response.');
     });
 });
