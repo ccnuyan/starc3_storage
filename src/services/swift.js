@@ -226,6 +226,7 @@ Swift.prototype.request = function (options, callback, pipe) {
 
                 if (part.name === 'file' && part.mime && part.filename) {
                     // console.log(part);
+                    console.log(part.mime);
                     filePartFound = true;
                     //encloud request
                     uploadReq = protocol.request(options, function (res) {
