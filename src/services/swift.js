@@ -374,7 +374,7 @@ Swift.prototype.createObject = Swift.prototype.updateObject = function (containe
         }
         extend(options, {
             contentLength: req.headers['content-length'],
-            encoding: 'utf-8',
+            // encoding: 'utf-8',
             boundary: boundary[1] || boundary[2]
         });
         options.headers['Transfer-Encoding'] = 'chunked';
